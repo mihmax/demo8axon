@@ -5,7 +5,6 @@ import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
-import ua.dp.maxym.demo8.common.exception.NotEnoughGoodsException;
 import ua.dp.maxym.demo8.inventory.command.CancelPickingGoodsCommand;
 import ua.dp.maxym.demo8.inventory.command.CreateGoodsCommand;
 import ua.dp.maxym.demo8.inventory.command.PickGoodsCommand;

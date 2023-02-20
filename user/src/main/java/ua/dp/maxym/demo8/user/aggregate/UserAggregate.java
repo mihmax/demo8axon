@@ -5,7 +5,6 @@ import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
-import ua.dp.maxym.demo8.common.exception.NotEnoughMoneyException;
 import ua.dp.maxym.demo8.user.command.PayCommand;
 import ua.dp.maxym.demo8.user.event.UserCreatedEvent;
 import ua.dp.maxym.demo8.user.command.CreateUserCommand;

@@ -7,7 +7,7 @@ import org.axonframework.modelling.saga.SagaLifecycle;
 import org.axonframework.modelling.saga.StartSaga;
 import org.axonframework.spring.stereotype.Saga;
 import org.springframework.beans.factory.annotation.Autowired;
-import ua.dp.maxym.demo8.common.exception.NotEnoughGoodsException;
+import ua.dp.maxym.demo8.inventory.aggregate.NotEnoughGoodsException;
 import ua.dp.maxym.demo8.inventory.aggregate.GoodsAggregate;
 import ua.dp.maxym.demo8.inventory.command.CancelPickingGoodsCommand;
 import ua.dp.maxym.demo8.inventory.command.PickGoodsCommand;
