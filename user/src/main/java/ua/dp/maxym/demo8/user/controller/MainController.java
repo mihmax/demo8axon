@@ -36,9 +36,9 @@ public class MainController {
 
     @GetMapping("/create")
     public String create() {
-        commandGateway.send(new CreateUserCommand("mihmax@gmail.com", "Maxym", "Mykhalchuk", 1234.56));
-        commandGateway.send(new CreateUserCommand("mmyk@ciklum.com", "Maksym", "Mykhalchuk", 7890.12));
-        commandGateway.send(new CreateUserCommand("test@gmail.com", "Test", "User", 3456.78));
+        commandGateway.send(new CreateUserCommand("test1@gmail.com", "Test", "First", 1234.56));
+        commandGateway.send(new CreateUserCommand("test2@gmail.com", "Test", "Second", 7890.12));
+        commandGateway.send(new CreateUserCommand("test3@gmail.com", "Test", "Third", 3456.78));
         return """
                 Created, see <a href="/list">the list of users</a>
                 """;
