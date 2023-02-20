@@ -15,9 +15,9 @@ import ua.dp.maxym.demo8.inventory.event.GoodsQuantityChangedEvent;
 public class GoodsAggregate {
 
     @AggregateIdentifier
-    private String name;
-    private Integer quantity;
-    private Double pricePerItem;
+    public String name;
+    public Integer quantity;
+    public Double pricePerItem;
 
     public GoodsAggregate() {
         System.out.print("GoodsAggregate default constructor called\n\n");
@@ -48,12 +48,12 @@ public class GoodsAggregate {
             throw new NotEnoughGoodsException("Not enough %s (requested %s while there's only %s in stock", name,
                                               command.quantity(), quantity);
         }
-        AggregateLifecycle.apply(new GoodsQuantityChangedEvent(name, quantity, quantity - command.quantity()));
+        AggregateLifecycle.apply(new GoodsQuantityChangedEvent(name, quantity - command.quantity()));
     }
 
     @CommandHandler
     public void handle(CancelPickingGoodsCommand command) {
-        AggregateLifecycle.apply(new GoodsQuantityChangedEvent(name, quantity, quantity + command.quantity()));
+        AggregateLifecycle.apply(new GoodsQuantityChangedEvent(name, quantity + command.quantity()));
     }
 
     @EventSourcingHandler

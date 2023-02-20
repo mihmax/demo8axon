@@ -5,15 +5,17 @@ import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
+import ua.dp.maxym.demo8.user.command.PayCommand;
 import ua.dp.maxym.demo8.user.event.UserCreatedEvent;
 import ua.dp.maxym.demo8.user.command.CreateUserCommand;
+import ua.dp.maxym.demo8.user.event.UserMoneyChangedEvent;
 
 @Aggregate
 public class UserAggregate {
 
     @AggregateIdentifier
     // private UUID id;
-    private String email;
+    public String email;
     private String firstName;
     private String lastName;
     private Double money;
@@ -57,6 +59,14 @@ public class UserAggregate {
         return money;
     }
 
+    @CommandHandler
+    public void handle(PayCommand command) {
+        if (command.money() > getMoney()) {
+            throw new NotEnoughMoneyException("User %s cannot pay %s as he only has %s", getEmail(), command.money(), getMoney());
+        }
+        AggregateLifecycle.apply(new UserMoneyChangedEvent(getMoney() - command.money()));
+    }
+
     @EventSourcingHandler
     public void on(UserCreatedEvent event) {
         System.out.printf("UserAggregate.on(UserCreatedEvent) called with %s\n\n", event);
@@ -67,4 +77,8 @@ public class UserAggregate {
         this.money = event.money();
     }
 
+    @EventSourcingHandler
+    public void on(UserMoneyChangedEvent event) {
+        this.money = event.newMoney();
+    }
 }
