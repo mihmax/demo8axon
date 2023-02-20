@@ -4,7 +4,7 @@ import com.mongodb.lang.NonNull;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.stereotype.Component;
-import ua.dp.maxym.demo8.common.event.UserCreatedEvent;
+import ua.dp.maxym.demo8.user.event.UserCreatedEvent;
 
 @Component
 @ProcessingGroup("validateUniqueEmail")

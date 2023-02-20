@@ -8,8 +8,8 @@ import org.axonframework.spring.stereotype.Aggregate;
 import ua.dp.maxym.demo8.inventory.command.CancelPickingGoodsCommand;
 import ua.dp.maxym.demo8.inventory.command.CreateGoodsCommand;
 import ua.dp.maxym.demo8.inventory.command.PickGoodsCommand;
-import ua.dp.maxym.demo8.common.event.GoodsCreatedEvent;
-import ua.dp.maxym.demo8.common.event.GoodsQuantityChangedEvent;
+import ua.dp.maxym.demo8.inventory.event.GoodsCreatedEvent;
+import ua.dp.maxym.demo8.inventory.event.GoodsQuantityChangedEvent;
 
 @Aggregate
 public class GoodsAggregate {
