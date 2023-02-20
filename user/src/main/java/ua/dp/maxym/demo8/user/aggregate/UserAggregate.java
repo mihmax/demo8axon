@@ -6,16 +6,13 @@ import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 import ua.dp.maxym.demo8.common.event.UserCreatedEvent;
-import ua.dp.maxym.demo8.common.exception.DuplicateEmailException;
 import ua.dp.maxym.demo8.user.command.CreateUserCommand;
-
-import java.util.UUID;
 
 @Aggregate
 public class UserAggregate {
 
     @AggregateIdentifier
-    private UUID id;
+    // private UUID id;
     private String email;
     private String firstName;
     private String lastName;
@@ -28,6 +25,8 @@ public class UserAggregate {
     @CommandHandler
     public UserAggregate(CreateUserCommand createUserCommand, EmailRepository emailRepository) {
         System.out.printf("UserAggregate constructor called with %s\n", createUserCommand);
+        /*
+        removed to simplify and not code Query side for now
         System.out.printf("Checking if email %s exists\n", createUserCommand.email());
         if (emailRepository.existsById(createUserCommand.email())) {
             System.out.println("Yeap :(");
@@ -35,14 +34,11 @@ public class UserAggregate {
                                               createUserCommand.email());
         }
         System.out.println("Nope :)");
+         */
         AggregateLifecycle.apply(new UserCreatedEvent(createUserCommand.email(),
                                                       createUserCommand.firstName(),
                                                       createUserCommand.lastName(),
                                                       createUserCommand.money()));
-    }
-
-    public UUID getId() {
-        return id;
     }
 
     public String getEmail() {
@@ -64,7 +60,7 @@ public class UserAggregate {
     @EventSourcingHandler
     public void on(UserCreatedEvent event) {
         System.out.printf("UserAggregate.on(UserCreatedEvent) called with %s\n\n", event);
-        this.id = UUID.randomUUID();
+        // this.id = UUID.randomUUID();
         this.email = event.email();
         this.firstName = event.firstName();
         this.lastName = event.lastName();
