@@ -11,8 +11,6 @@ import ua.dp.maxym.demo8.common.event.UserCreatedEvent;
 class UserCreatedEventSubscriber {
     @EventHandler
     public void on(@NonNull UserCreatedEvent userCreatedEvent, @NonNull EmailRepository emailRepository) {
-        if (!emailRepository.existsById(userCreatedEvent.email())) {
-            emailRepository.save(new Email(userCreatedEvent.email()));
-        }
+        emailRepository.save(new Email(userCreatedEvent.email()));
     }
 }
