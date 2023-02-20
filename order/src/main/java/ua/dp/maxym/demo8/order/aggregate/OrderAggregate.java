@@ -20,7 +20,7 @@ import java.util.List;
 public class OrderAggregate {
 
     @AggregateIdentifier
-    private Integer number;
+    private Integer orderId;
     private UserAggregate user;
     private List<GoodsAggregate> orderItems;
     private Double total;
@@ -35,7 +35,7 @@ public class OrderAggregate {
     public OrderAggregate(CreateOrderCommand command) {
         System.out.printf("Received CreateOrderCommand %s\n", command);
         var total = command.orderItems().stream().mapToDouble((agg) -> agg.getQuantity() * agg.getPricePerItem()).sum();
-        AggregateLifecycle.apply(new OrderCreatedEvent(command.n(), command.user(), command.orderItems(), total));
+        AggregateLifecycle.apply(new OrderCreatedEvent(command.orderId(), command.user(), command.orderItems(), total));
     }
 
     public OrderState getState() {
@@ -46,8 +46,8 @@ public class OrderAggregate {
         return rejectionReason;
     }
 
-    public Integer getNumber() {
-        return number;
+    public Integer getOrderId() {
+        return orderId;
     }
 
     public UserAggregate getUser() {
@@ -69,17 +69,28 @@ public class OrderAggregate {
 
     @CommandHandler
     public void handle(RejectOrderCommand command) {
-        AggregateLifecycle.apply(new OrderRejectedEvent());
+        AggregateLifecycle.apply(new OrderRejectedEvent(command.reason()));
     }
 
     @EventSourcingHandler
     public void on(OrderCreatedEvent event) {
         System.out.printf("OrderAggregate.on(OrderCreatedEvent) called with %s\n\n", event);
-        this.number = event.orderId();
+        this.orderId = event.orderId();
         this.user = event.user();
         this.orderItems = event.orderItems();
         this.total = event.total();
         this.state = OrderState.PENDING;
         this.rejectionReason = null;
+    }
+
+    @EventSourcingHandler
+    public void on(OrderApprovedEvent event) {
+        this.state = OrderState.APPROVED;
+    }
+
+    @EventSourcingHandler
+    public void on(OrderRejectedEvent event) {
+        this.state = OrderState.REJECTED;
+        this.rejectionReason = event.rejectionReason();
     }
 }

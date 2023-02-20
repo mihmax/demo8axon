@@ -5,6 +5,7 @@ import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
+import ua.dp.maxym.demo8.common.exception.NotEnoughMoneyException;
 import ua.dp.maxym.demo8.user.command.PayCommand;
 import ua.dp.maxym.demo8.user.event.UserCreatedEvent;
 import ua.dp.maxym.demo8.user.command.CreateUserCommand;
@@ -25,18 +26,8 @@ public class UserAggregate {
     }
 
     @CommandHandler
-    public UserAggregate(CreateUserCommand createUserCommand, EmailRepository emailRepository) {
+    public UserAggregate(CreateUserCommand createUserCommand) {
         System.out.printf("UserAggregate constructor called with %s\n", createUserCommand);
-        /*
-        removed to simplify and not code Query side for now
-        System.out.printf("Checking if email %s exists\n", createUserCommand.email());
-        if (emailRepository.existsById(createUserCommand.email())) {
-            System.out.println("Yeap :(");
-            throw new DuplicateEmailException("Account with email address %s already exists",
-                                              createUserCommand.email());
-        }
-        System.out.println("Nope :)");
-         */
         AggregateLifecycle.apply(new UserCreatedEvent(createUserCommand.email(),
                                                       createUserCommand.firstName(),
                                                       createUserCommand.lastName(),
@@ -60,7 +51,7 @@ public class UserAggregate {
     }
 
     @CommandHandler
-    public void handle(PayCommand command) {
+    public void handle(PayCommand command) throws NotEnoughMoneyException {
         if (command.money() > getMoney()) {
             throw new NotEnoughMoneyException("User %s cannot pay %s as he only has %s", getEmail(), command.money(), getMoney());
         }

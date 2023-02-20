@@ -1,4 +1,6 @@
 package ua.dp.maxym.demo8.inventory.command;
 
-public record PickGoodsCommand(String name, Integer quantity) {
+import org.axonframework.modelling.command.TargetAggregateIdentifier;
+
+public record PickGoodsCommand(@TargetAggregateIdentifier String name, Integer quantity) {
 }

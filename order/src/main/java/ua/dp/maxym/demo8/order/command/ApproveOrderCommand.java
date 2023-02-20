@@ -1,4 +1,6 @@
 package ua.dp.maxym.demo8.order.command;
 
-public record ApproveOrderCommand() {
+import org.axonframework.modelling.command.TargetAggregateIdentifier;
+
+public record ApproveOrderCommand(@TargetAggregateIdentifier Integer orderId) {
 }

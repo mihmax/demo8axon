@@ -1,4 +1,6 @@
 package ua.dp.maxym.demo8.user.command;
 
-public record PayCommand(Double money) {
+import org.axonframework.modelling.command.TargetAggregateIdentifier;
+
+public record PayCommand(@TargetAggregateIdentifier String userEmail, Double money) {
 }

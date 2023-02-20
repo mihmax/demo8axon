@@ -50,11 +50,11 @@ public class MainController {
         user.email = "test1@gmail.com";
         var item1 = new GoodsAggregate();
         item1.name = "Item1";
-        item1.quantity = 1;
+        item1.quantity = 2;
         item1.pricePerItem = 100.0;
         var item2 = new GoodsAggregate();
         item2.name = "Item2";
-        item2.quantity = 10;
+        item2.quantity = 1;
         item2.pricePerItem = 50.0;
         commandGateway.send(new CreateOrderCommand(nPreviousOrders, user, List.of(item1, item2)));
         return String.format("""
