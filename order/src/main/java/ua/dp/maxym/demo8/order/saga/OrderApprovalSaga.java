@@ -1,7 +1,10 @@
 package ua.dp.maxym.demo8.order.saga;
 
 import org.axonframework.commandhandling.CommandExecutionException;
+import org.axonframework.commandhandling.CommandMessage;
+import org.axonframework.commandhandling.GenericCommandMessage;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.modelling.command.Repository;
 import org.axonframework.modelling.saga.SagaEventHandler;
 import org.axonframework.modelling.saga.SagaLifecycle;
 import org.axonframework.modelling.saga.StartSaga;
@@ -11,6 +14,7 @@ import ua.dp.maxym.demo8.inventory.aggregate.NotEnoughGoodsException;
 import ua.dp.maxym.demo8.inventory.aggregate.GoodsAggregate;
 import ua.dp.maxym.demo8.inventory.command.CancelPickingGoodsCommand;
 import ua.dp.maxym.demo8.inventory.command.PickGoodsCommand;
+import ua.dp.maxym.demo8.order.aggregate.OrderAggregate;
 import ua.dp.maxym.demo8.order.command.ApproveOrderCommand;
 import ua.dp.maxym.demo8.order.command.RejectOrderCommand;
 import ua.dp.maxym.demo8.order.event.OrderCreatedEvent;
@@ -24,6 +28,10 @@ public class OrderApprovalSaga {
 
     @Autowired
     private CommandGateway commandGateway;
+
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    @Autowired
+    Repository<OrderAggregate> orderRepository;
 
     @StartSaga
     @SagaEventHandler(associationProperty = "orderId")
@@ -66,9 +74,23 @@ public class OrderApprovalSaga {
         }
 
         if (ok) {
-            commandGateway.send(new ApproveOrderCommand(event.orderId()));
+            try {
+                orderRepository.load(event.orderId().toString()).handle(
+                        GenericCommandMessage.asCommandMessage(new ApproveOrderCommand()));
+            } catch (Exception e) {
+                System.out.println("ERRRRRRRROR");
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
         } else {
-            commandGateway.send(new RejectOrderCommand(event.orderId(), reason));
+            try {
+                orderRepository.load(event.orderId().toString()).handle(
+                            GenericCommandMessage.asCommandMessage(new RejectOrderCommand(reason)));
+            } catch (Exception e) {
+                System.out.println("ERRRRRRRROR");
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
         }
 
         SagaLifecycle.end();
