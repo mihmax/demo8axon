@@ -1,0 +1,6 @@
+rootProject.name = 'demo8axon'
+
+include 'common'
+include 'user'
+include 'inventory'
+include 'order'
