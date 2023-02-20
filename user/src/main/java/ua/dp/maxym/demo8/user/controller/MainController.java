@@ -48,7 +48,7 @@ public class MainController {
     public Map<String, List<UserAggregate>> list() {
         UnitOfWork<Message<?>> uow = DefaultUnitOfWork.startAndGet(null);
         try {
-            return Map.of("users", Stream.of("mihmax@gmail.com", "mmyk@ciklum.com", "test@gmail.com")
+            return Map.of("users", Stream.of("test1@gmail.com", "test2@gmail.com", "test3@gmail.com")
                                          .map((goods) -> AxonUtil.unwrap(userRepository.load(goods))).toList());
         } catch (Exception e) {
             e.printStackTrace();
