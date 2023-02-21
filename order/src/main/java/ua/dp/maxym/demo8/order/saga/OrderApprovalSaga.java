@@ -1,7 +1,6 @@
 package ua.dp.maxym.demo8.order.saga;
 
 import org.axonframework.commandhandling.CommandExecutionException;
-import org.axonframework.commandhandling.CommandMessage;
 import org.axonframework.commandhandling.GenericCommandMessage;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.modelling.command.Repository;
@@ -10,10 +9,10 @@ import org.axonframework.modelling.saga.SagaLifecycle;
 import org.axonframework.modelling.saga.StartSaga;
 import org.axonframework.spring.stereotype.Saga;
 import org.springframework.beans.factory.annotation.Autowired;
-import ua.dp.maxym.demo8.inventory.aggregate.NotEnoughGoodsException;
 import ua.dp.maxym.demo8.inventory.aggregate.GoodsAggregate;
-import ua.dp.maxym.demo8.inventory.command.CancelPickingGoodsCommand;
-import ua.dp.maxym.demo8.inventory.command.PickGoodsCommand;
+import ua.dp.maxym.demo8.inventory.aggregate.NotEnoughGoodsException;
+import ua.dp.maxym.demo8.inventory.command.CancelSKUsReservationCommand;
+import ua.dp.maxym.demo8.inventory.command.ReserveSKUsCommand;
 import ua.dp.maxym.demo8.order.aggregate.OrderAggregate;
 import ua.dp.maxym.demo8.order.command.ApproveOrderCommand;
 import ua.dp.maxym.demo8.order.command.RejectOrderCommand;
@@ -26,29 +25,28 @@ import java.util.List;
 @Saga
 public class OrderApprovalSaga {
 
-    @Autowired
-    private CommandGateway commandGateway;
-
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     Repository<OrderAggregate> orderRepository;
+    @Autowired
+    private transient CommandGateway commandGateway;
 
     @StartSaga
     @SagaEventHandler(associationProperty = "orderId")
     public void on(OrderCreatedEvent event) {
-        List<CancelPickingGoodsCommand> compensations = new ArrayList<>();
+        List<CancelSKUsReservationCommand> compensations = new ArrayList<>();
 
         boolean ok = true;
         String reason = null;
 
-        // try to pick up all the goods
+        // try to pick up all the skuList
         for (GoodsAggregate goods : event.orderItems()) {
             try {
-                commandGateway.sendAndWait(new PickGoodsCommand(goods.getName(), goods.getQuantity()));
-                compensations.add(new CancelPickingGoodsCommand(goods.getName(), goods.getQuantity()));
+                commandGateway.sendAndWait(new ReserveSKUsCommand(goods.getName(), goods.getQuantity()));
+                compensations.add(new CancelSKUsReservationCommand(goods.getName(), goods.getQuantity()));
             } catch (CommandExecutionException e) {
                 if (e.getMessage().startsWith(NotEnoughGoodsException.class.getSimpleName())) {
-                    // if picking up any of the goods fails, rolling back the successful ones
+                    // if picking up any of the skuList fails, rolling back the successful ones
                     compensations.forEach(compensation -> commandGateway.send(compensation));
                     ok = false;
                     reason = e.getMessage();
@@ -85,7 +83,7 @@ public class OrderApprovalSaga {
         } else {
             try {
                 orderRepository.load(event.orderId().toString()).handle(
-                            GenericCommandMessage.asCommandMessage(new RejectOrderCommand(reason)));
+                        GenericCommandMessage.asCommandMessage(new RejectOrderCommand(reason)));
             } catch (Exception e) {
                 System.out.println("ERRRRRRRROR");
                 e.printStackTrace();

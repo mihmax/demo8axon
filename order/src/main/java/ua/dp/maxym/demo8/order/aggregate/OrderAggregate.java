@@ -5,24 +5,22 @@ import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
-import ua.dp.maxym.demo8.inventory.aggregate.GoodsAggregate;
 import ua.dp.maxym.demo8.order.command.ApproveOrderCommand;
 import ua.dp.maxym.demo8.order.command.CreateOrderCommand;
 import ua.dp.maxym.demo8.order.command.RejectOrderCommand;
 import ua.dp.maxym.demo8.order.event.OrderApprovedEvent;
 import ua.dp.maxym.demo8.order.event.OrderCreatedEvent;
 import ua.dp.maxym.demo8.order.event.OrderRejectedEvent;
-import ua.dp.maxym.demo8.user.aggregate.UserAggregate;
 
-import java.util.List;
+import java.util.Map;
 
 @Aggregate
 public class OrderAggregate {
 
     @AggregateIdentifier
     private Integer orderId;
-    private UserAggregate user;
-    private List<GoodsAggregate> orderItems;
+    private String userId;
+    private Map<String, Integer> orderItems;
     private Double total;
     private OrderState state;
     private String rejectionReason;
@@ -34,8 +32,7 @@ public class OrderAggregate {
     @CommandHandler
     public OrderAggregate(CreateOrderCommand command) {
         System.out.printf("Received CreateOrderCommand %s\n", command);
-        var total = command.orderItems().stream().mapToDouble((agg) -> agg.getQuantity() * agg.getPricePerItem()).sum();
-        AggregateLifecycle.apply(new OrderCreatedEvent(command.orderId(), command.user(), command.orderItems(), total));
+        AggregateLifecycle.apply(new OrderCreatedEvent(command.orderId(), command.user(), command.orderItems()));
     }
 
     public OrderState getState() {
@@ -50,11 +47,11 @@ public class OrderAggregate {
         return orderId;
     }
 
-    public UserAggregate getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
-    public List<GoodsAggregate> getOrderItems() {
+    public Map<String, Integer> getOrderItems() {
         return orderItems;
     }
 
@@ -76,9 +73,9 @@ public class OrderAggregate {
     public void on(OrderCreatedEvent event) {
         System.out.printf("OrderAggregate.on(OrderCreatedEvent) called with %s\n\n", event);
         this.orderId = event.orderId();
-        this.user = event.user();
+        this.userId = event.userId();
         this.orderItems = event.orderItems();
-        this.total = event.total();
+        this.total = null; // unknown yet
         this.state = OrderState.PENDING;
         this.rejectionReason = null;
     }

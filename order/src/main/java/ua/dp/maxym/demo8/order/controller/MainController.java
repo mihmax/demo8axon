@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.dp.maxym.demo8.common.util.AxonUtil;
-import ua.dp.maxym.demo8.inventory.aggregate.GoodsAggregate;
 import ua.dp.maxym.demo8.order.aggregate.OrderAggregate;
 import ua.dp.maxym.demo8.order.command.CreateOrderCommand;
-import ua.dp.maxym.demo8.user.aggregate.UserAggregate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +22,7 @@ public class MainController {
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     Repository<OrderAggregate> orderRepository;
-    //@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    //@Autowired
-    //Repository<UserAggregate> userRepository;
-    //@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    //@Autowired
-    //Repository<GoodsAggregate> goodsRepository;
+
     @Autowired
     private CommandGateway commandGateway;
 
@@ -44,19 +37,12 @@ public class MainController {
 
     @GetMapping("/create")
     public String create() {
-        String orderId = null;
         int nPreviousOrders = list().get("orders").size();
-        var user = new UserAggregate();
-        user.email = "test1@gmail.com";
-        var item1 = new GoodsAggregate();
-        item1.name = "Item1";
-        item1.quantity = 2;
-        item1.pricePerItem = 100.0;
-        var item2 = new GoodsAggregate();
-        item2.name = "Item2";
-        item2.quantity = 1;
-        item2.pricePerItem = 50.0;
-        commandGateway.send(new CreateOrderCommand(nPreviousOrders, user, List.of(item1, item2)));
+        String orderId = commandGateway
+                .sendAndWait(new CreateOrderCommand(nPreviousOrders,
+                                                    "test1@gmail.com",
+                                                    Map.of("Item1", 2,
+                                                           "Item2", 1)));
         return String.format("""
                                      Created %s, see <a href="/list">the list of orders</a>
                                      """, orderId);
