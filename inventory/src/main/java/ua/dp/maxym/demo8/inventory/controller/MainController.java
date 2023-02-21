@@ -45,13 +45,13 @@ public class MainController {
     }
 
     @GetMapping("/list")
-    public Map<String, WarehouseAggregate> list() {
+    public Map<String, Object> list() {
         UnitOfWork<Message<?>> uow = DefaultUnitOfWork.startAndGet(null);
         try {
             return Map.of(WAREHOUSE_NAME, AxonUtil.unwrap(warehouseRepository.load(WAREHOUSE_NAME)));
         } catch (Exception e) {
             e.printStackTrace();
-            return Map.of(e.getMessage(), null);
+            return Map.of(e.getMessage(), "");
         } finally {
             uow.rollback();
         }
