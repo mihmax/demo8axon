@@ -57,7 +57,7 @@ public class WarehouseAggregate {
                         new SKUQuantityChangedEvent(entry.getKey(),
                                                     sku.getQuantity() - entry.getValue()));
             }
-            AggregateLifecycle.apply(new SKUsReservedEvent(reservationId, command.skuMap(), reservationPrice));
+            AggregateLifecycle.apply(new ReservationCreatedEvent(reservationId, command.skuMap(), reservationPrice));
         } else {
             AggregateLifecycle.apply(new ErrorCannotReserveSKUsEvent());
         }
@@ -107,7 +107,7 @@ public class WarehouseAggregate {
     }
 
     @EventSourcingHandler
-    public void on(SKUsReservedEvent event) {
+    public void on(ReservationCreatedEvent event) {
         List<SKU> skuList = event.skuMap().entrySet().stream()
                                  .map(entry -> new SKU(entry.getKey(), entry.getValue(),
                                                        skuMap.get(entry.getKey()).getPricePerItem()))
