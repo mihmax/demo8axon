@@ -7,7 +7,7 @@ import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 import ua.dp.maxym.demo8.user.command.CreateUserCommand;
 import ua.dp.maxym.demo8.user.command.PayCommand;
-import ua.dp.maxym.demo8.user.event.ErrorChangingUserMoneyEvent;
+import ua.dp.maxym.demo8.user.event.ErrorNotEnoughMoneyEvent;
 import ua.dp.maxym.demo8.user.event.UserCreatedEvent;
 import ua.dp.maxym.demo8.user.event.UserMoneyChangedEvent;
 
@@ -53,7 +53,7 @@ public class UserAggregate {
     @CommandHandler
     public void handle(PayCommand command) {
         if (command.money() > getMoney()) {
-            AggregateLifecycle.apply(new ErrorChangingUserMoneyEvent(getEmail(), command.money(), getMoney()));
+            AggregateLifecycle.apply(new ErrorNotEnoughMoneyEvent(getEmail(), command.money(), getMoney()));
         } else {
             AggregateLifecycle.apply(new UserMoneyChangedEvent(getEmail(), getMoney() - command.money()));
         }

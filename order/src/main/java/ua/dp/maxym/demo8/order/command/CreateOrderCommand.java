@@ -5,7 +5,7 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier;
 import java.util.Map;
 
 public record CreateOrderCommand(
-        @TargetAggregateIdentifier Integer orderId,
+        @TargetAggregateIdentifier String orderId,
         String userId,
         Map<String, Integer> orderItems) {
 }

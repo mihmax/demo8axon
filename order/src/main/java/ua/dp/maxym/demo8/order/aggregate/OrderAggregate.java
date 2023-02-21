@@ -8,9 +8,11 @@ import org.axonframework.spring.stereotype.Aggregate;
 import ua.dp.maxym.demo8.order.command.ApproveOrderCommand;
 import ua.dp.maxym.demo8.order.command.CreateOrderCommand;
 import ua.dp.maxym.demo8.order.command.RejectOrderCommand;
+import ua.dp.maxym.demo8.order.command.UpdateOrderTotalCommand;
 import ua.dp.maxym.demo8.order.event.OrderApprovedEvent;
 import ua.dp.maxym.demo8.order.event.OrderCreatedEvent;
 import ua.dp.maxym.demo8.order.event.OrderRejectedEvent;
+import ua.dp.maxym.demo8.order.event.OrderTotalChangedEvent;
 
 import java.util.Map;
 
@@ -18,7 +20,7 @@ import java.util.Map;
 public class OrderAggregate {
 
     @AggregateIdentifier
-    private Integer orderId;
+    private String orderId;
     private String userId;
     private Map<String, Integer> orderItems;
     private Double total;
@@ -43,7 +45,7 @@ public class OrderAggregate {
         return rejectionReason;
     }
 
-    public Integer getOrderId() {
+    public String getOrderId() {
         return orderId;
     }
 
@@ -61,7 +63,12 @@ public class OrderAggregate {
 
     @CommandHandler
     public void handle(ApproveOrderCommand command) {
-        AggregateLifecycle.apply(new OrderApprovedEvent(orderId, command.total()));
+        AggregateLifecycle.apply(new OrderApprovedEvent(orderId));
+    }
+
+    @CommandHandler
+    public void handle(UpdateOrderTotalCommand command) {
+        AggregateLifecycle.apply(new OrderTotalChangedEvent(orderId, command.newTotal()));
     }
 
     @CommandHandler
@@ -81,8 +88,12 @@ public class OrderAggregate {
     }
 
     @EventSourcingHandler
+    public void on(OrderTotalChangedEvent event) {
+        this.total = event.newTotal();
+    }
+
+    @EventSourcingHandler
     public void on(OrderApprovedEvent event) {
-        this.total = event.total();
         this.state = OrderState.APPROVED;
     }
 

@@ -1,4 +1,6 @@
 package ua.dp.maxym.demo8.inventory.command;
 
-public record CreateWarehouseCommand (String name) {
+import org.axonframework.modelling.command.TargetAggregateIdentifier;
+
+public record CreateWarehouseCommand (@TargetAggregateIdentifier String warehouseId) {
 }

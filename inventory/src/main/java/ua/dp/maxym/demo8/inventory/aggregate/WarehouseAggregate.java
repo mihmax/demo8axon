@@ -17,24 +17,25 @@ import java.util.UUID;
 
 @Aggregate
 public class WarehouseAggregate {
+    private final Map<String, List<SKU>> reservations = new HashMap<>();
     @AggregateIdentifier
     private String warehouseId;
     @AggregateMember
     private Map<String, SKU> skuMap;
-    private Map<String, List<SKU>> reservations;
 
     public WarehouseAggregate() {
     }
 
     @CommandHandler
     public WarehouseAggregate(CreateWarehouseCommand command) {
-        AggregateLifecycle.apply(new WarehouseCreatedEvent(command.name()));
+        AggregateLifecycle.apply(new WarehouseCreatedEvent(command.warehouseId()));
     }
 
     @CommandHandler
     public void handle(AddSKUCommand command) {
         if (skuMap.containsKey(command.name())) {
-            AggregateLifecycle.apply(new SKUArrivedEvent(command.name(), command.quantity()));
+            var newQuantity = command.quantity() + skuMap.get(command.name()).getQuantity();
+            AggregateLifecycle.apply(new SKUQuantityChangedEvent(command.name(), newQuantity));
         } else {
             AggregateLifecycle.apply(new SKUCreatedEvent(command.name(), command.quantity(), command.pricePerItem()));
         }
@@ -57,7 +58,8 @@ public class WarehouseAggregate {
                         new SKUQuantityChangedEvent(entry.getKey(),
                                                     sku.getQuantity() - entry.getValue()));
             }
-            AggregateLifecycle.apply(new ReservationCreatedEvent(warehouseId, reservationId, command.skuMap(), reservationPrice));
+            AggregateLifecycle.apply(
+                    new ReservationCreatedEvent(warehouseId, reservationId, command.skuMap(), reservationPrice));
         } else {
             AggregateLifecycle.apply(new ErrorReservationFailedEvent(warehouseId));
         }

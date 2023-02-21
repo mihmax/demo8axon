@@ -39,8 +39,8 @@ public class MainController {
     public String create() {
         int nPreviousOrders = list().get("orders").size();
         String orderId = commandGateway
-                .sendAndWait(new CreateOrderCommand(nPreviousOrders,
-                                                    "test1@gmail.com",
+                .sendAndWait(new CreateOrderCommand(String.valueOf(nPreviousOrders),
+                                                    "test2@gmail.com",
                                                     Map.of("Item1", 2,
                                                            "Item2", 1)));
         return String.format("""
