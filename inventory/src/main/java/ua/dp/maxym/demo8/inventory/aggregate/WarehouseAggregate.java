@@ -18,7 +18,7 @@ import java.util.UUID;
 @Aggregate
 public class WarehouseAggregate {
     @AggregateIdentifier
-    private String name;
+    private String warehouseId;
     @AggregateMember
     private Map<String, SKU> skuMap;
     private Map<String, List<SKU>> reservations;
@@ -57,18 +57,18 @@ public class WarehouseAggregate {
                         new SKUQuantityChangedEvent(entry.getKey(),
                                                     sku.getQuantity() - entry.getValue()));
             }
-            AggregateLifecycle.apply(new ReservationCreatedEvent(reservationId, command.skuMap(), reservationPrice));
+            AggregateLifecycle.apply(new ReservationCreatedEvent(warehouseId, reservationId, command.skuMap(), reservationPrice));
         } else {
-            AggregateLifecycle.apply(new ErrorReservationFailedEvent());
+            AggregateLifecycle.apply(new ErrorReservationFailedEvent(warehouseId));
         }
     }
 
     @CommandHandler
     public void handle(ConfirmSKUsReservationCommand command) {
         if (reservations.containsKey(command.reservationId())) {
-            AggregateLifecycle.apply(new ReservationConfirmedEvent(command.reservationId()));
+            AggregateLifecycle.apply(new ReservationConfirmedEvent(warehouseId, command.reservationId()));
         } else {
-            AggregateLifecycle.apply(new ErrorReservationDoesNotExistEvent(command.reservationId()));
+            AggregateLifecycle.apply(new ErrorReservationDoesNotExistEvent(warehouseId, command.reservationId()));
         }
     }
 
@@ -83,12 +83,12 @@ public class WarehouseAggregate {
                                                                     + skuMap.get(item.getName()).getQuantity())));
 
         } else {
-            AggregateLifecycle.apply(new ErrorReservationDoesNotExistEvent(command.reservationId()));
+            AggregateLifecycle.apply(new ErrorReservationDoesNotExistEvent(warehouseId, command.reservationId()));
         }
     }
 
-    public String getName() {
-        return name;
+    public String getWarehouseId() {
+        return warehouseId;
     }
 
     public Map<String, SKU> getSkuMap() {
@@ -97,7 +97,7 @@ public class WarehouseAggregate {
 
     @EventSourcingHandler
     public void on(WarehouseCreatedEvent event) {
-        this.name = event.name();
+        this.warehouseId = event.name();
         this.skuMap = new HashMap<>();
     }
 

@@ -61,12 +61,12 @@ public class OrderAggregate {
 
     @CommandHandler
     public void handle(ApproveOrderCommand command) {
-        AggregateLifecycle.apply(new OrderApprovedEvent(command.total()));
+        AggregateLifecycle.apply(new OrderApprovedEvent(orderId, command.total()));
     }
 
     @CommandHandler
     public void handle(RejectOrderCommand command) {
-        AggregateLifecycle.apply(new OrderRejectedEvent(command.reason()));
+        AggregateLifecycle.apply(new OrderRejectedEvent(orderId, command.reason()));
     }
 
     @EventSourcingHandler
