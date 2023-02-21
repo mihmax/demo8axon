@@ -1,10 +1,11 @@
 dependencies {
-	implementation project(':common')
-	implementation project(':inventory-api')
+    implementation project(':common')
+    implementation project(':inventory-api')
+    implementation project(':user-api')
 
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.axonframework:axon-spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.axonframework:axon-spring-boot-starter'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.axonframework:axon-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.axonframework:axon-test'
 }

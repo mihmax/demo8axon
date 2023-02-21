@@ -32,7 +32,7 @@ public class OrderAggregate {
     @CommandHandler
     public OrderAggregate(CreateOrderCommand command) {
         System.out.printf("Received CreateOrderCommand %s\n", command);
-        AggregateLifecycle.apply(new OrderCreatedEvent(command.orderId(), command.user(), command.orderItems()));
+        AggregateLifecycle.apply(new OrderCreatedEvent(command.orderId(), command.userId(), command.orderItems()));
     }
 
     public OrderState getState() {
@@ -61,7 +61,7 @@ public class OrderAggregate {
 
     @CommandHandler
     public void handle(ApproveOrderCommand command) {
-        AggregateLifecycle.apply(new OrderApprovedEvent());
+        AggregateLifecycle.apply(new OrderApprovedEvent(command.total()));
     }
 
     @CommandHandler
@@ -82,6 +82,7 @@ public class OrderAggregate {
 
     @EventSourcingHandler
     public void on(OrderApprovedEvent event) {
+        this.total = event.total();
         this.state = OrderState.APPROVED;
     }
 
