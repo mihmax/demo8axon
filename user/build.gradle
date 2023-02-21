@@ -1,5 +1,7 @@
 dependencies {
 	implementation project(':common')
+	implementation project(':user-api')
+
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.axonframework:axon-spring-boot-starter'
 
