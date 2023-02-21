@@ -59,7 +59,7 @@ public class WarehouseAggregate {
             }
             AggregateLifecycle.apply(new ReservationCreatedEvent(reservationId, command.skuMap(), reservationPrice));
         } else {
-            AggregateLifecycle.apply(new ErrorCannotReserveSKUsEvent());
+            AggregateLifecycle.apply(new ErrorReservationFailedEvent());
         }
     }
 
