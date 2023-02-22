@@ -4,6 +4,8 @@ import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.EntityId;
 import ua.dp.maxym.demo8.inventory.event.SKUQuantityChangedEvent;
 
+import java.util.Objects;
+
 public class SKU {
 
     @EntityId(routingKey = "skuName")
@@ -37,5 +39,20 @@ public class SKU {
         if (this.skuName.equals(event.skuName())) {
             this.quantity = event.newQuantity();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SKU sku = (SKU) o;
+        return Objects.equals(skuName, sku.skuName) && Objects.equals(pricePerItem,
+                                                                      sku.pricePerItem) && Objects.equals(
+                quantity, sku.quantity);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(skuName, pricePerItem, quantity);
     }
 }
