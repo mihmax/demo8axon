@@ -4,6 +4,9 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.axonframework:axon-spring-boot-starter'
+	implementation 'com.google.protobuf:protobuf-java:3.21.7'
+	// implementation 'org.yaml:snakeyaml:2.0-SNAPSHOT'
+	// As per https://bitbucket.org/snakeyaml/snakeyaml/wiki/CVE-2022-1471 Spring is not affected
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.axonframework:axon-test'
