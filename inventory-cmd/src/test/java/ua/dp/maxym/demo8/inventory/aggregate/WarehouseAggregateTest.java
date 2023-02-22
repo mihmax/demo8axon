@@ -45,12 +45,26 @@ public class WarehouseAggregateTest {
         fixture.givenCommands(new CreateWarehouseCommand(WAREHOUSE_ID))
                .andGiven(new SKUCreatedEvent(WAREHOUSE_ID, SKU_NAME_1, SKU_QUANTITY_1, SKU_PRICE_1))
                .when(new AddSKUCommand(WAREHOUSE_ID, SKU_NAME_1, SKU_QUANTITY_2, SKU_PRICE_1))
-               .expectEvents(new SKUQuantityChangedEvent(WAREHOUSE_ID, SKU_NAME_1, SKU_QUANTITY_1 + SKU_QUANTITY_2));
+               .expectEvents(new SKUQuantityChangedEvent(WAREHOUSE_ID, SKU_NAME_1, SKU_QUANTITY_1 + SKU_QUANTITY_2))
+               .expectState(w -> {
+                   assert w.getSkuMap().size() == 1;
+                   assert w.getSkuMap().containsKey(SKU_NAME_1);
+                   assert w.getSkuMap().get(SKU_NAME_1)
+                           .equals(new SKU(SKU_NAME_1, SKU_QUANTITY_1 + SKU_QUANTITY_2, SKU_PRICE_1));
+               });
 
         fixture.givenCommands(new CreateWarehouseCommand(WAREHOUSE_ID)
                        , new AddSKUCommand(WAREHOUSE_ID, SKU_NAME_1, SKU_QUANTITY_1, SKU_PRICE_1))
                .when(new AddSKUCommand(WAREHOUSE_ID, SKU_NAME_2, SKU_QUANTITY_2, SKU_PRICE_2))
-               .expectEvents(new SKUCreatedEvent(WAREHOUSE_ID, SKU_NAME_2, SKU_QUANTITY_2, SKU_PRICE_2));
+               .expectEvents(new SKUCreatedEvent(WAREHOUSE_ID, SKU_NAME_2, SKU_QUANTITY_2, SKU_PRICE_2))
+               .expectState(w -> {
+                   assert w.getWarehouseId().equals(WAREHOUSE_ID);
+                   assert w.getSkuMap().size() == 2;
+                   assert w.getSkuMap().containsKey(SKU_NAME_1);
+                   assert w.getSkuMap().containsKey(SKU_NAME_2);
+                   assert w.getSkuMap().get(SKU_NAME_1).equals(new SKU(SKU_NAME_1, SKU_QUANTITY_1, SKU_PRICE_1));
+                   assert w.getSkuMap().get(SKU_NAME_2).equals(new SKU(SKU_NAME_2, SKU_QUANTITY_2, SKU_PRICE_2));
+               });
     }
 
 }
