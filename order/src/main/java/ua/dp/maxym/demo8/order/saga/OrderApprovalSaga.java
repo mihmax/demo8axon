@@ -3,7 +3,6 @@ package ua.dp.maxym.demo8.order.saga;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.deadline.DeadlineManager;
 import org.axonframework.deadline.annotation.DeadlineHandler;
-import org.axonframework.modelling.command.Repository;
 import org.axonframework.modelling.saga.EndSaga;
 import org.axonframework.modelling.saga.SagaEventHandler;
 import org.axonframework.modelling.saga.SagaLifecycle;
@@ -17,7 +16,6 @@ import ua.dp.maxym.demo8.inventory.event.ErrorReservationDoesNotExistEvent;
 import ua.dp.maxym.demo8.inventory.event.ErrorReservationFailedEvent;
 import ua.dp.maxym.demo8.inventory.event.ReservationConfirmedEvent;
 import ua.dp.maxym.demo8.inventory.event.ReservationCreatedEvent;
-import ua.dp.maxym.demo8.order.aggregate.OrderAggregate;
 import ua.dp.maxym.demo8.order.command.ApproveOrderCommand;
 import ua.dp.maxym.demo8.order.command.RejectOrderCommand;
 import ua.dp.maxym.demo8.order.command.UpdateOrderTotalCommand;
@@ -29,32 +27,27 @@ import ua.dp.maxym.demo8.user.event.ErrorNotEnoughMoneyEvent;
 import ua.dp.maxym.demo8.user.event.UserMoneyChangedEvent;
 
 import java.time.Duration;
-import java.util.Map;
 
 import static ua.dp.maxym.demo8.order.saga.SagaState.*;
 
+@SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection") // Saga must have default constructor
 @Saga
 public class OrderApprovalSaga {
 
     private static final String DEADLINE_NAME = "orderApprovalDeadline";
     private static final String warehouseId = "warehouse1";
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    @Autowired
-    Repository<OrderAggregate> orderRepository;
     @Autowired
     private transient CommandGateway commandGateway;
     @Autowired
     private transient DeadlineManager deadlineManager;
 
 
-    private String deadlineId;
-    private String orderId;
-    private String userId;
-    private Map<String, Integer> orderItems;
-
+    private String deadlineId = null;
+    private String orderId = null;
+    private String userId = null;
     private SagaState state = null;
-    private String reservationId;
+    private String reservationId = null;
 
     @StartSaga
     @SagaEventHandler(associationProperty = "orderId")
@@ -64,7 +57,6 @@ public class OrderApprovalSaga {
 
         orderId = event.orderId();
         userId = event.userId();
-        orderItems = event.orderItems();
 
         SagaLifecycle.associateWith("warehouseId", warehouseId);
         commandGateway.send(new ReserveSKUsCommand(warehouseId, event.orderItems()));
@@ -153,15 +145,12 @@ public class OrderApprovalSaga {
 
     private void cancelEverything(Object event) {
         switch (state) {
-            case PAYING:
-            case RESERVING_SKUs:
-            case CONFIRMING_SKU:
-            case CONFIRMING_ORDER:
-                commandGateway.send(new CancelSKUsReservationCommand(warehouseId, reservationId));
+            case PAYING, RESERVING_SKUs, CONFIRMING_SKU, CONFIRMING_ORDER -> {
+                if (reservationId != null)
+                    commandGateway.send(new CancelSKUsReservationCommand(warehouseId, reservationId));
                 commandGateway.send(new RejectOrderCommand(orderId, event.getClass().getSimpleName()));
-                break;
-            default:
-                throw new AssertionError("Invalid Saga state");
+            }
+            default -> throw new AssertionError("Invalid Saga state");
         }
     }
 }

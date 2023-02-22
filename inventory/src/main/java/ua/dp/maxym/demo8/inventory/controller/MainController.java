@@ -19,12 +19,19 @@ import java.util.Map;
 public class MainController {
 
     public static final String WAREHOUSE_NAME = "warehouse1";
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    @Autowired
-    Repository<WarehouseAggregate> warehouseRepository;
-    @Autowired
-    private CommandGateway commandGateway;
+    private final Repository<WarehouseAggregate> warehouseRepository;
+    private final CommandGateway commandGateway;
 
+    @Autowired
+    public MainController(
+            @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+            Repository<WarehouseAggregate> warehouseRepository,
+            CommandGateway commandGateway) {
+        this.warehouseRepository = warehouseRepository;
+        this.commandGateway = commandGateway;
+    }
+
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/")
     public String index() {
         return """
@@ -34,6 +41,7 @@ public class MainController {
                 """;
     }
 
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/create")
     public String create() {
         commandGateway.send(new CreateWarehouseCommand(WAREHOUSE_NAME));

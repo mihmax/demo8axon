@@ -28,35 +28,39 @@ public class OrderAggregate {
     private String rejectionReason;
 
     public OrderAggregate() {
-        System.out.print("OrderAggregate default constructor called\n\n");
     }
 
     @CommandHandler
     public OrderAggregate(CreateOrderCommand command) {
-        System.out.printf("Received CreateOrderCommand %s\n", command);
         AggregateLifecycle.apply(new OrderCreatedEvent(command.orderId(), command.userId(), command.orderItems()));
     }
 
+    @SuppressWarnings("unused")
     public OrderState getState() {
         return state;
     }
 
+    @SuppressWarnings("unused")
     public String getRejectionReason() {
         return rejectionReason;
     }
 
+    @SuppressWarnings("unused")
     public String getOrderId() {
         return orderId;
     }
 
+    @SuppressWarnings("unused")
     public String getUserId() {
         return userId;
     }
 
+    @SuppressWarnings("unused")
     public Map<String, Integer> getOrderItems() {
         return orderItems;
     }
 
+    @SuppressWarnings("unused")
     public Double getTotal() {
         return total;
     }
@@ -78,7 +82,6 @@ public class OrderAggregate {
 
     @EventSourcingHandler
     public void on(OrderCreatedEvent event) {
-        System.out.printf("OrderAggregate.on(OrderCreatedEvent) called with %s\n\n", event);
         this.orderId = event.orderId();
         this.userId = event.userId();
         this.orderItems = event.orderItems();

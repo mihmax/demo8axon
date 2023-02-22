@@ -1,23 +1,24 @@
 package ua.dp.maxym.demo8.inventory.aggregate;
 
-import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
+import org.axonframework.modelling.command.EntityId;
 import ua.dp.maxym.demo8.inventory.event.SKUQuantityChangedEvent;
 
 public class SKU {
 
-    private String name;
+    @EntityId(routingKey = "skuName")
+    private final String skuName;
+    private final Double pricePerItem;
     private Integer quantity;
-    private Double pricePerItem;
 
-    public SKU(String name, Integer quantity, Double pricePerItem) {
-        this.name = name;
+    public SKU(String skuName, Integer quantity, Double pricePerItem) {
+        this.skuName = skuName;
         this.quantity = quantity;
         this.pricePerItem = pricePerItem;
     }
 
-    public String getName() {
-        return name;
+    public String getSkuName() {
+        return skuName;
     }
 
     public Integer getQuantity() {
@@ -29,7 +30,15 @@ public class SKU {
     }
 
     @EventSourcingHandler
-    public void on(SKUQuantityChangedEvent command) {
-        this.quantity = command.newQuantity();
+    public void on(SKUQuantityChangedEvent event) {
+        // Axon is sending same events to all members of collection
+        // And @EntityId(routingKey = "skuName") does not work
+        // It works for Command Handlers, but not for Event Handlers :(
+        if (this.skuName.equals(event.skuName())) {
+            this.quantity = event.newQuantity();
+        } else {
+            // Looks like this does not work in event handlers
+            System.out.println("@EntityId should do the trick, right?");
+        }
     }
 }

@@ -19,13 +19,19 @@ import java.util.Map;
 @RestController
 public class MainController {
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    @Autowired
-    Repository<OrderAggregate> orderRepository;
+    private final Repository<OrderAggregate> orderRepository;
+    private final CommandGateway commandGateway;
 
     @Autowired
-    private CommandGateway commandGateway;
+    public MainController(
+            @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+            Repository<OrderAggregate> orderRepository,
+            CommandGateway commandGateway) {
+        this.orderRepository = orderRepository;
+        this.commandGateway = commandGateway;
+    }
 
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/")
     public String index() {
         return """
@@ -53,6 +59,8 @@ public class MainController {
         UnitOfWork<Message<?>> uow = DefaultUnitOfWork.startAndGet(null);
         List<OrderAggregate> orders = new ArrayList<>();
         try {
+            // Only way without view model
+            //noinspection InfiniteLoopStatement
             for (int i = 0; ; i++) {
                 orders.add(AxonUtil.unwrap(orderRepository.load(String.valueOf(i))));
             }

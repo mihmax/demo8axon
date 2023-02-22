@@ -19,12 +19,19 @@ import java.util.stream.Stream;
 @RestController
 public class MainController {
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    @Autowired
-    Repository<UserAggregate> userRepository;
-    @Autowired
-    private CommandGateway commandGateway;
+    private final Repository<UserAggregate> userRepository;
+    private final CommandGateway commandGateway;
 
+    @Autowired
+    public MainController(
+            @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+            Repository<UserAggregate> userRepository,
+            CommandGateway commandGateway) {
+        this.userRepository = userRepository;
+        this.commandGateway = commandGateway;
+    }
+
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/")
     public String index() {
         return """
@@ -34,6 +41,7 @@ public class MainController {
                 """;
     }
 
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/create")
     public String create() {
         commandGateway.send(new CreateUserCommand("test1@gmail.com", "Test", "First", 1234.56));
