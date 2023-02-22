@@ -1,31 +1,26 @@
 package ua.dp.maxym.demo8.inventory.controller;
 
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.messaging.Message;
-import org.axonframework.messaging.unitofwork.DefaultUnitOfWork;
-import org.axonframework.messaging.unitofwork.UnitOfWork;
-import org.axonframework.modelling.command.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ua.dp.maxym.demo8.common.util.AxonUtil;
-import ua.dp.maxym.demo8.inventory.aggregate.WarehouseAggregate;
 import ua.dp.maxym.demo8.inventory.command.AddSKUCommand;
 import ua.dp.maxym.demo8.inventory.command.CreateWarehouseCommand;
+import ua.dp.maxym.demo8.inventory.query.Warehouse;
+import ua.dp.maxym.demo8.inventory.query.WarehouseRepository;
 
-import java.util.Map;
+import java.util.List;
 
 @RestController
 public class MainController {
 
     public static final String WAREHOUSE_NAME = "warehouse1";
-    private final Repository<WarehouseAggregate> warehouseRepository;
+    private final WarehouseRepository warehouseRepository;
     private final CommandGateway commandGateway;
 
     @Autowired
     public MainController(
-            @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-            Repository<WarehouseAggregate> warehouseRepository,
+            WarehouseRepository warehouseRepository,
             CommandGateway commandGateway) {
         this.warehouseRepository = warehouseRepository;
         this.commandGateway = commandGateway;
@@ -53,15 +48,7 @@ public class MainController {
     }
 
     @GetMapping("/list")
-    public Map<String, Object> list() {
-        UnitOfWork<Message<?>> uow = DefaultUnitOfWork.startAndGet(null);
-        try {
-            return Map.of(WAREHOUSE_NAME, AxonUtil.unwrap(warehouseRepository.load(WAREHOUSE_NAME)));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Map.of(e.getMessage(), "");
-        } finally {
-            uow.rollback();
-        }
+    public List<Warehouse> list() {
+        return warehouseRepository.findAll();
     }
 }

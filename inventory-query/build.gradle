@@ -1,8 +1,9 @@
 dependencies {
-	implementation project(':common')
 	implementation project(':inventory-api')
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'com.h2database:h2'
 	implementation 'org.axonframework:axon-spring-boot-starter'
 	implementation 'com.google.protobuf:protobuf-java:3.21.7'
 	// implementation 'org.yaml:snakeyaml:2.0-SNAPSHOT'

@@ -35,9 +35,9 @@ public class WarehouseAggregate {
     public void handle(AddSKUCommand command) {
         if (skuMap.containsKey(command.skuName())) {
             var newQuantity = command.quantity() + skuMap.get(command.skuName()).getQuantity();
-            AggregateLifecycle.apply(new SKUQuantityChangedEvent(command.skuName(), newQuantity));
+            AggregateLifecycle.apply(new SKUQuantityChangedEvent(warehouseId, command.skuName(), newQuantity));
         } else {
-            AggregateLifecycle.apply(new SKUCreatedEvent(command.skuName(), command.quantity(), command.pricePerItem()));
+            AggregateLifecycle.apply(new SKUCreatedEvent(warehouseId, command.skuName(), command.quantity(), command.pricePerItem()));
         }
     }
 
@@ -55,7 +55,7 @@ public class WarehouseAggregate {
                 SKU sku = skuMap.get(entry.getKey());
                 reservationPrice += entry.getValue() * sku.getPricePerItem();
                 AggregateLifecycle.apply(
-                        new SKUQuantityChangedEvent(entry.getKey(),
+                        new SKUQuantityChangedEvent(warehouseId, entry.getKey(),
                                                     sku.getQuantity() - entry.getValue()));
             }
             AggregateLifecycle.apply(
@@ -80,7 +80,7 @@ public class WarehouseAggregate {
         if (reservations.containsKey(reservationId)) {
             reservations.get(reservationId)
                         .forEach(item -> AggregateLifecycle.apply(
-                                new SKUQuantityChangedEvent(item.getSkuName(),
+                                new SKUQuantityChangedEvent(warehouseId, item.getSkuName(),
                                                             item.getQuantity()
                                                                     + skuMap.get(item.getSkuName()).getQuantity())));
             AggregateLifecycle.apply(new ReservationCancelledEvent(reservationId));
@@ -106,7 +106,7 @@ public class WarehouseAggregate {
 
     @EventSourcingHandler
     public void on(SKUCreatedEvent event) {
-        skuMap.put(event.name(), new SKU(event.name(), event.quantity(), event.pricePerItem()));
+        skuMap.put(event.skuName(), new SKU(event.skuName(), event.quantity(), event.pricePerItem()));
     }
 
     @EventSourcingHandler

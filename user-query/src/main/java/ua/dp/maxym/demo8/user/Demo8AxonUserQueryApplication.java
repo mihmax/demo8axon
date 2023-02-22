@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Demo8AxonUserApplication {
+public class Demo8AxonUserQueryApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Demo8AxonUserApplication.class, args);
+        SpringApplication.run(Demo8AxonUserQueryApplication.class, args);
     }
 
 }

@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Demo8AxonInventoryApplication {
+public class Demo8AxonInventoryQueryApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Demo8AxonInventoryApplication.class, args);
+        SpringApplication.run(Demo8AxonInventoryQueryApplication.class, args);
     }
 
 }

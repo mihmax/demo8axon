@@ -1,33 +1,25 @@
 package ua.dp.maxym.demo8.order.controller;
 
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.messaging.Message;
-import org.axonframework.messaging.unitofwork.DefaultUnitOfWork;
-import org.axonframework.messaging.unitofwork.UnitOfWork;
-import org.axonframework.modelling.command.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ua.dp.maxym.demo8.common.util.AxonUtil;
-import ua.dp.maxym.demo8.order.aggregate.OrderAggregate;
 import ua.dp.maxym.demo8.order.command.CreateOrderCommand;
+import ua.dp.maxym.demo8.order.query.Order;
+import ua.dp.maxym.demo8.order.query.OrderRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 public class MainController {
 
-    private final Repository<OrderAggregate> orderRepository;
+    private final OrderRepository orderRepo;
     private final CommandGateway commandGateway;
 
     @Autowired
-    public MainController(
-            @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-            Repository<OrderAggregate> orderRepository,
-            CommandGateway commandGateway) {
-        this.orderRepository = orderRepository;
+    public MainController(OrderRepository orderRepo, CommandGateway commandGateway) {
+        this.orderRepo = orderRepo;
         this.commandGateway = commandGateway;
     }
 
@@ -43,7 +35,7 @@ public class MainController {
 
     @GetMapping("/create")
     public String create() {
-        int nPreviousOrders = list().get("orders").size();
+        int nPreviousOrders = list().size();
         String orderId = commandGateway
                 .sendAndWait(new CreateOrderCommand(String.valueOf(nPreviousOrders),
                                                     "test2@gmail.com",
@@ -55,20 +47,7 @@ public class MainController {
     }
 
     @GetMapping("/list")
-    public Map<String, List<OrderAggregate>> list() {
-        UnitOfWork<Message<?>> uow = DefaultUnitOfWork.startAndGet(null);
-        List<OrderAggregate> orders = new ArrayList<>();
-        try {
-            // Only way without view model
-            //noinspection InfiniteLoopStatement
-            for (int i = 0; ; i++) {
-                orders.add(AxonUtil.unwrap(orderRepository.load(String.valueOf(i))));
-            }
-        } catch (Exception e) {
-            // ignore
-        } finally {
-            uow.rollback();
-        }
-        return Map.of("orders", orders);
+    public List<Order> list() {
+        return orderRepo.findAll();
     }
 }

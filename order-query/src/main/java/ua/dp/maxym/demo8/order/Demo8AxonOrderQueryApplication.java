@@ -11,10 +11,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class Demo8AxonOrderApplication {
+public class Demo8AxonOrderQueryApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Demo8AxonOrderApplication.class, args);
+        SpringApplication.run(Demo8AxonOrderQueryApplication.class, args);
     }
 
     @Bean

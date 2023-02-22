@@ -1,9 +1,12 @@
 dependencies {
-	implementation project(':common')
 	implementation project(':user-api')
 
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.axonframework:axon-spring-boot-starter'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+	// security
 	implementation 'com.google.protobuf:protobuf-java:3.21.7'
 	// implementation 'org.yaml:snakeyaml:2.0-SNAPSHOT'
 	// As per https://bitbucket.org/snakeyaml/snakeyaml/wiki/CVE-2022-1471 Spring is not affected

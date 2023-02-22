@@ -1,6 +1,5 @@
 rootProject.name = 'demo8axon'
 
-include 'common'
 include 'inventory-api'
 include 'user-api'
 include 'order-api'
