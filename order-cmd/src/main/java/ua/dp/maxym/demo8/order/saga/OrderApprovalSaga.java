@@ -27,6 +27,7 @@ import ua.dp.maxym.demo8.user.event.ErrorNotEnoughMoneyEvent;
 import ua.dp.maxym.demo8.user.event.UserMoneyChangedEvent;
 
 import java.time.Duration;
+import java.util.UUID;
 
 import static ua.dp.maxym.demo8.order.saga.SagaState.*;
 
@@ -58,20 +59,21 @@ public class OrderApprovalSaga {
         orderId = event.orderId();
         userId = event.userId();
 
-        SagaLifecycle.associateWith("warehouseId", warehouseId);
-        commandGateway.send(new ReserveSKUsCommand(warehouseId, event.orderItems()));
+        String reservationId = UUID.randomUUID().toString();
+        SagaLifecycle.associateWith("reservationId", reservationId);
+        commandGateway.send(new ReserveSKUsCommand(warehouseId, reservationId, event.orderItems()));
 
         state = RESERVING_SKUs;
     }
 
     @EndSaga
-    @SagaEventHandler(associationProperty = "warehouseId")
+    @SagaEventHandler(associationProperty = "reservationId")
     public void on(ErrorReservationFailedEvent event) {
         if (state != RESERVING_SKUs) throw new AssertionError("Invalid Saga state");
         cancelEverything(event);
     }
 
-    @SagaEventHandler(associationProperty = "warehouseId")
+    @SagaEventHandler(associationProperty = "reservationId")
     public void on(ReservationCreatedEvent event) {
         if (state != RESERVING_SKUs) throw new AssertionError("Invalid Saga state");
 
@@ -79,20 +81,21 @@ public class OrderApprovalSaga {
         Double orderTotal = event.reservationPrice();
         commandGateway.send(new UpdateOrderTotalCommand(orderId, orderTotal));
 
-        SagaLifecycle.associateWith("userId", userId);
-        commandGateway.sendAndWait(new PayCommand(userId, orderTotal));
+        String paymentId = UUID.randomUUID().toString();
+        SagaLifecycle.associateWith("paymentId", paymentId);
+        commandGateway.sendAndWait(new PayCommand(userId, paymentId, orderTotal));
 
         state = PAYING;
     }
 
     @EndSaga
-    @SagaEventHandler(associationProperty = "userId")
+    @SagaEventHandler(associationProperty = "paymentId")
     public void on(ErrorNotEnoughMoneyEvent event) {
         if (state != PAYING) throw new AssertionError("Invalid Saga state");
         cancelEverything(event);
     }
 
-    @SagaEventHandler(associationProperty = "userId")
+    @SagaEventHandler(associationProperty = "paymentId")
     public void on(UserMoneyChangedEvent event) {
         if (state != PAYING) throw new AssertionError("Invalid Saga state");
 
@@ -102,13 +105,13 @@ public class OrderApprovalSaga {
     }
 
     @EndSaga
-    @SagaEventHandler(associationProperty = "warehouseId")
+    @SagaEventHandler(associationProperty = "reservationId")
     public void on(ErrorReservationDoesNotExistEvent event) {
         if (state != CONFIRMING_SKU) throw new AssertionError("Invalid Saga state");
         cancelEverything(event);
     }
 
-    @SagaEventHandler(associationProperty = "warehouseId")
+    @SagaEventHandler(associationProperty = "reservationId")
     public void on(ReservationConfirmedEvent event) {
         if (state != CONFIRMING_SKU) throw new AssertionError("Invalid Saga state");
 

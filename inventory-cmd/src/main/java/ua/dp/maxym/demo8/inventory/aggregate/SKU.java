@@ -36,9 +36,6 @@ public class SKU {
         // It works for Command Handlers, but not for Event Handlers :(
         if (this.skuName.equals(event.skuName())) {
             this.quantity = event.newQuantity();
-        } else {
-            // Looks like this does not work in event handlers
-            System.out.println("@EntityId should do the trick, right?");
         }
     }
 }

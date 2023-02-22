@@ -15,6 +15,7 @@ import ua.dp.maxym.demo8.order.event.OrderRejectedEvent;
 import ua.dp.maxym.demo8.order.event.OrderTotalChangedEvent;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Aggregate
 public class OrderAggregate {
@@ -32,7 +33,8 @@ public class OrderAggregate {
 
     @CommandHandler
     public OrderAggregate(CreateOrderCommand command) {
-        AggregateLifecycle.apply(new OrderCreatedEvent(command.orderId(), command.userId(), command.orderItems()));
+        String orderId = UUID.randomUUID().toString();
+        AggregateLifecycle.apply(new OrderCreatedEvent(orderId, command.userId(), command.orderItems()));
     }
 
     @SuppressWarnings("unused")

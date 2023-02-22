@@ -31,8 +31,6 @@ public final class Order {
     }
 
     @SuppressWarnings("unused")
-    @Id
-    @GeneratedValue
     public String getOrderId() {
         return orderId;
     }

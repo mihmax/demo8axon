@@ -22,12 +22,10 @@ public class UserAggregate {
     private Double money;
 
     public UserAggregate() {
-        System.out.print("UserAggregate default constructor called\n\n");
     }
 
     @CommandHandler
     public UserAggregate(CreateUserCommand createUserCommand) {
-        System.out.printf("UserAggregate constructor called with %s\n", createUserCommand);
         AggregateLifecycle.apply(new UserCreatedEvent(createUserCommand.email(),
                                                       createUserCommand.firstName(),
                                                       createUserCommand.lastName(),
@@ -55,16 +53,14 @@ public class UserAggregate {
     @CommandHandler
     public void handle(PayCommand command) {
         if (command.money() > getMoney()) {
-            AggregateLifecycle.apply(new ErrorNotEnoughMoneyEvent(getEmail(), command.money(), getMoney()));
+            AggregateLifecycle.apply(new ErrorNotEnoughMoneyEvent(getEmail(), command.paymentId(), command.money(), getMoney()));
         } else {
-            AggregateLifecycle.apply(new UserMoneyChangedEvent(getEmail(), getMoney() - command.money()));
+            AggregateLifecycle.apply(new UserMoneyChangedEvent(getEmail(), command.paymentId(), getMoney() - command.money()));
         }
     }
 
     @EventSourcingHandler
     public void on(UserCreatedEvent event) {
-        System.out.printf("UserAggregate.on(UserCreatedEvent) called with %s\n\n", event);
-        // this.id = UUID.randomUUID();
         this.email = event.email();
         this.firstName = event.firstName();
         this.lastName = event.lastName();

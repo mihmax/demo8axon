@@ -35,15 +35,18 @@ public class MainController {
 
     @GetMapping("/create")
     public String create() {
-        int nPreviousOrders = list().size();
-        String orderId = commandGateway
-                .sendAndWait(new CreateOrderCommand(String.valueOf(nPreviousOrders),
-                                                    "test2@gmail.com",
-                                                    Map.of("Item1", 2,
-                                                           "Item2", 1)));
-        return String.format("""
-                                     Created %s, see <a href="/list">the list of orders</a>
-                                     """, orderId);
+        try {
+            String orderId = commandGateway
+                    .sendAndWait(new CreateOrderCommand("test2@gmail.com",
+                                                        Map.of("Item1", 2,
+                                                               "Item2", 1)));
+            return String.format("""
+                                         Created %s, see <a href="/list">the list of orders</a>
+                                         """, orderId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return e.getMessage();
+        }
     }
 
     @GetMapping("/list")

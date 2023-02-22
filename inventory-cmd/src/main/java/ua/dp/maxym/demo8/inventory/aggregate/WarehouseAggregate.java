@@ -13,15 +13,14 @@ import ua.dp.maxym.demo8.inventory.event.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Aggregate
 public class WarehouseAggregate {
     private final Map<String, List<SKU>> reservations = new HashMap<>();
-    @AggregateIdentifier
-    private String warehouseId;
     @AggregateMember
     private final Map<String, SKU> skuMap = new HashMap<>();
+    @AggregateIdentifier
+    private String warehouseId;
 
     public WarehouseAggregate() {
     }
@@ -37,7 +36,8 @@ public class WarehouseAggregate {
             var newQuantity = command.quantity() + skuMap.get(command.skuName()).getQuantity();
             AggregateLifecycle.apply(new SKUQuantityChangedEvent(warehouseId, command.skuName(), newQuantity));
         } else {
-            AggregateLifecycle.apply(new SKUCreatedEvent(warehouseId, command.skuName(), command.quantity(), command.pricePerItem()));
+            AggregateLifecycle.apply(
+                    new SKUCreatedEvent(warehouseId, command.skuName(), command.quantity(), command.pricePerItem()));
         }
     }
 
@@ -49,7 +49,6 @@ public class WarehouseAggregate {
                                                             .getQuantity() < entry.getValue())
                            .findAny().orElse(null)) {
             // creating reservation
-            String reservationId = UUID.randomUUID().toString();
             double reservationPrice = 0.0;
             for (Map.Entry<String, Integer> entry : command.skuMap().entrySet()) {
                 SKU sku = skuMap.get(entry.getKey());
@@ -59,9 +58,10 @@ public class WarehouseAggregate {
                                                     sku.getQuantity() - entry.getValue()));
             }
             AggregateLifecycle.apply(
-                    new ReservationCreatedEvent(warehouseId, reservationId, command.skuMap(), reservationPrice));
+                    new ReservationCreatedEvent(warehouseId, command.reservationId(), command.skuMap(),
+                                                reservationPrice));
         } else {
-            AggregateLifecycle.apply(new ErrorReservationFailedEvent(warehouseId));
+            AggregateLifecycle.apply(new ErrorReservationFailedEvent(warehouseId, command.reservationId()));
         }
     }
 
