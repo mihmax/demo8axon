@@ -1,0 +1,9 @@
+server:
+  port: 8080
+
+# Axon
+axon:
+  serializer:
+    general: jackson
+    events: jackson
+    messages: jackson
