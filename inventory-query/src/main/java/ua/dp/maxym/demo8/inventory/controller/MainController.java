@@ -33,6 +33,8 @@ public class MainController {
                 Call this to create warehouse and add SKUs: <a href="/create">Create the repository / add more stuff</a></a>
                 <br/>
                 <a href="/list">List the warehouse</a>
+                <br/><br/>
+                <a href="/swagger-ui.html">Swagger for API</a>
                 """;
     }
 

@@ -30,6 +30,8 @@ public class MainController {
                 Call this once: <a href="/create">Create the repository</a></a>
                 <br/>
                 <a href="/list">List the repository</a>
+                <br/><br/>
+                <a href="/swagger-ui.html">Swagger for API</a>
                 """;
     }
 

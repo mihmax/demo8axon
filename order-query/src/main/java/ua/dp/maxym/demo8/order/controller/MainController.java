@@ -30,6 +30,8 @@ public class MainController {
                 Call this to <a href="/create">create the order</a></a>
                 <br/>
                 <a href="/list">List the orders</a>
+                <br/><br/>
+                <a href="/swagger-ui.html">Swagger for API</a>
                 """;
     }
 
