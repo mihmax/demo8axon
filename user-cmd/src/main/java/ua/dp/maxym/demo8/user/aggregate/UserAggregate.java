@@ -1,5 +1,8 @@
 package ua.dp.maxym.demo8.user.aggregate;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -12,6 +15,7 @@ import ua.dp.maxym.demo8.user.event.UserCreatedEvent;
 import ua.dp.maxym.demo8.user.event.UserMoneyChangedEvent;
 
 @Aggregate
+@Getter @EqualsAndHashCode @ToString
 public class UserAggregate {
 
     @AggregateIdentifier
@@ -30,24 +34,6 @@ public class UserAggregate {
                                                       createUserCommand.firstName(),
                                                       createUserCommand.lastName(),
                                                       createUserCommand.money()));
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    @SuppressWarnings("unused")
-    public String getFirstName() {
-        return firstName;
-    }
-
-    @SuppressWarnings("unused")
-    public String getLastName() {
-        return lastName;
-    }
-
-    public Double getMoney() {
-        return money;
     }
 
     @CommandHandler
