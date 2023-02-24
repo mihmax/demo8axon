@@ -1,7 +1,6 @@
 package ua.dp.maxym.demo8.inventory.controller;
 
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.dp.maxym.demo8.inventory.command.AddSKUCommand;
@@ -18,7 +17,6 @@ public class MainController {
     private final WarehouseRepository warehouseRepository;
     private final CommandGateway commandGateway;
 
-    @Autowired
     public MainController(
             WarehouseRepository warehouseRepository,
             CommandGateway commandGateway) {

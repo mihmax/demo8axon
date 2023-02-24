@@ -1,7 +1,6 @@
 package ua.dp.maxym.demo8.user.query;
 
 import org.axonframework.eventhandling.EventHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ua.dp.maxym.demo8.user.event.UserCreatedEvent;
 import ua.dp.maxym.demo8.user.event.UserMoneyChangedEvent;
@@ -11,7 +10,6 @@ public class UserProjection {
 
     private final UserRepository userRepo;
 
-    @Autowired
     public UserProjection(UserRepository userRepo) {
         this.userRepo = userRepo;
     }

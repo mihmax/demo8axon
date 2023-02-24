@@ -1,7 +1,6 @@
 package ua.dp.maxym.demo8.order.query;
 
 import org.axonframework.eventhandling.EventHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ua.dp.maxym.demo8.order.event.OrderApprovedEvent;
 import ua.dp.maxym.demo8.order.event.OrderCreatedEvent;
@@ -14,7 +13,6 @@ public class OrderProjection {
     private final OrderRepository orderRepo;
     private final OrderItemRepository itemRepo;
 
-    @Autowired
     public OrderProjection(OrderRepository orderRepo, OrderItemRepository itemRepo) {
         this.orderRepo = orderRepo;
         this.itemRepo = itemRepo;

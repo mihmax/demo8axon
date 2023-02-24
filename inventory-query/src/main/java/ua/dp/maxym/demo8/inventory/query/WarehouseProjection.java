@@ -1,7 +1,6 @@
 package ua.dp.maxym.demo8.inventory.query;
 
 import org.axonframework.eventhandling.EventHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ua.dp.maxym.demo8.inventory.event.SKUCreatedEvent;
 import ua.dp.maxym.demo8.inventory.event.SKUQuantityChangedEvent;
@@ -13,7 +12,6 @@ public class WarehouseProjection {
     private final WarehouseRepository warehouseRepo;
     private final SKURepository skuRepo;
 
-    @Autowired
     public WarehouseProjection(WarehouseRepository warehouseRepo, SKURepository skuRepo) {
         this.warehouseRepo = warehouseRepo;
         this.skuRepo = skuRepo;

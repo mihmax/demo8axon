@@ -1,7 +1,6 @@
 package ua.dp.maxym.demo8.order.controller;
 
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.dp.maxym.demo8.order.command.CreateOrderCommand;
@@ -17,7 +16,6 @@ public class MainController {
     private final OrderRepository orderRepo;
     private final CommandGateway commandGateway;
 
-    @Autowired
     public MainController(OrderRepository orderRepo, CommandGateway commandGateway) {
         this.orderRepo = orderRepo;
         this.commandGateway = commandGateway;

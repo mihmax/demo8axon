@@ -1,7 +1,6 @@
 package ua.dp.maxym.demo8.user.controller;
 
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.dp.maxym.demo8.user.command.CreateUserCommand;
@@ -16,7 +15,6 @@ public class MainController {
     private final CommandGateway commandGateway;
     private final UserRepository userRepo;
 
-    @Autowired
     public MainController(CommandGateway commandGateway, UserRepository userRepo) {
         //this.userRepository = userRepository;
         this.commandGateway = commandGateway;
