@@ -1,5 +1,8 @@
 package ua.dp.maxym.demo8.order.aggregate;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -18,6 +21,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Aggregate
+@Getter @EqualsAndHashCode @ToString
 public class OrderAggregate {
 
     @AggregateIdentifier
@@ -35,36 +39,6 @@ public class OrderAggregate {
     public OrderAggregate(CreateOrderCommand command) {
         String orderId = UUID.randomUUID().toString();
         AggregateLifecycle.apply(new OrderCreatedEvent(orderId, command.userId(), command.orderItems()));
-    }
-
-    @SuppressWarnings("unused")
-    public OrderState getState() {
-        return state;
-    }
-
-    @SuppressWarnings("unused")
-    public String getRejectionReason() {
-        return rejectionReason;
-    }
-
-    @SuppressWarnings("unused")
-    public String getOrderId() {
-        return orderId;
-    }
-
-    @SuppressWarnings("unused")
-    public String getUserId() {
-        return userId;
-    }
-
-    @SuppressWarnings("unused")
-    public Map<String, Integer> getOrderItems() {
-        return orderItems;
-    }
-
-    @SuppressWarnings("unused")
-    public Double getTotal() {
-        return total;
     }
 
     @CommandHandler
