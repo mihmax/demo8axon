@@ -1,6 +1,7 @@
 package ua.dp.maxym.demo8.inventory.aggregate;
 
 
+import lombok.Data;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Aggregate
+@Data
 public class WarehouseAggregate {
     private final Map<String, List<SKU>> reservations = new HashMap<>();
     @AggregateMember
@@ -89,16 +91,6 @@ public class WarehouseAggregate {
         }
     }
 
-    @SuppressWarnings("unused")
-    public String getWarehouseId() {
-        return warehouseId;
-    }
-
-    @SuppressWarnings("unused")
-    public Map<String, SKU> getSkuMap() {
-        return skuMap;
-    }
-
     @EventSourcingHandler
     public void on(WarehouseCreatedEvent event) {
         this.warehouseId = event.name();
@@ -127,6 +119,4 @@ public class WarehouseAggregate {
     public void on(ReservationCancelledEvent event) {
         reservations.remove(event.reservationId());
     }
-
-
 }
