@@ -1,13 +1,15 @@
 package ua.dp.maxym.demo8.inventory.aggregate;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.EntityId;
 import ua.dp.maxym.demo8.inventory.event.SKUQuantityChangedEvent;
 
 import java.util.Objects;
 
-@Data
+@Getter @EqualsAndHashCode @ToString
 public class SKU {
 
     @EntityId(routingKey = "skuName")
@@ -27,7 +29,7 @@ public class SKU {
         // And @EntityId(routingKey = "skuName") does not work
         // It works for Command Handlers, but not for Event Handlers :(
         if (Objects.equals(getSkuName(), event.skuName())) {
-            setQuantity(event.newQuantity());
+            this.quantity = event.newQuantity();
         }
     }
 }

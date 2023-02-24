@@ -1,7 +1,9 @@
 package ua.dp.maxym.demo8.inventory.aggregate;
 
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -16,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Aggregate
-@Data
+@Getter @EqualsAndHashCode @ToString
 public class WarehouseAggregate {
     private final Map<String, List<SKU>> reservations = new HashMap<>();
     @AggregateMember
