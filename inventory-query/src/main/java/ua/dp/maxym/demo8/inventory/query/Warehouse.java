@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +18,7 @@ public final class Warehouse {
     private Long id;
     private String name;
     @OneToMany(mappedBy = "warehouse")
+    @EqualsAndHashCode.Exclude
     private Set<SKU> skus = new HashSet<>();
 
     public Warehouse() {

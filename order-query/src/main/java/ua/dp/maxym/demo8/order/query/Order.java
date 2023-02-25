@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +19,7 @@ public final class Order {
     private String orderId;
     private String userId;
     @OneToMany(mappedBy = "order")
+    @EqualsAndHashCode.Exclude
     private Set<OrderItem> orderItems = new HashSet<>();
     private Double total;
     private String state;
