@@ -1,6 +1,6 @@
 # Demo project using Axon Framework
 
-* By [Maxym Mykhalchuk](https://blog.maxym.dp.ua)
+* By [Maxym Mykhalchuk](https://blog.maxym.dp.ua) licensed under [Apache License 2.0](LICENSE)
 * Built on [Spring Boot 3](https://spring.io/projects/spring-boot) / [Spring Framework 6](https://spring.io)
 * Using [Axon Framework 4.7.0](https://developer.axoniq.io/axon-framework/overview)
 
