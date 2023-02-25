@@ -1,3 +1,7 @@
 dependencies {
 	implementation 'org.axonframework:axon-modelling'
 }
+
+bootRun {
+	enabled = false
+}
